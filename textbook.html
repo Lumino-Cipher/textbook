@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Load the html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textbook Chapter - The Rhetoric of Attention</title>
+    <style>
+        /* --- Core Page & Print Setup --- */
+        @page {
+            size: letter;
+            margin: 0.25in;
+        }
+        @media print {
+            body { background: #fff; color: #000; }
+            .page { margin: 0; box-shadow: none; page-break-after: always; }
+        }
+        
+        /* --- Global Typography & Layout --- */
+        body {
+            font-family: "Georgia", Times, serif;
+            line-height: 1.45;
+            color: #1a202c;
+            background-color: #525659;
+            margin: 0;
+            padding: 20px 0;
+        }
+        
+        .page {
+            background: #fff;
+            width: 8.5in;
+            height: 11in;
+            margin: 0 auto 30px auto;
+            box-sizing: border-box;
+            padding: 0.3in 0.4in; /* Minimal margins for maximum content */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        /* Running Headers and Footers */
+        .running-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8.5pt;
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            text-transform: uppercase;
+            border-bottom: 2px solid #2d3748;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            color: #2d3748;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .running-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8.5pt;
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            border-top: 1px solid #cbd5e0;
+            padding-top: 5px;
+            margin-top: auto;
+            color: #4a5568;
+        }
+
+        /* --- Content Density Layouts --- */
+        .page-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Ensures page is completely filled */
+        }
+
+        .columns {
+            display: flex;
+            gap: 0.3in;
+            flex: 1;
+        }
+
+        .column {
+            flex: 1;
+            text-align: justify;
+            font-size: 10.5pt;
+            hyphens: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Academic Typography Elements --- */
+        h1.chapter-title {
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 22pt;
+            color: #1a365d;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+        }
+        
+        h2 {
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 13.5pt;
+            color: #2c5282;
+            margin: 15px 0 8px 0;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+        }
+
+        h3 {
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 11pt;
+            color: #2d3748;
+            margin: 10px 0 5px 0;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+        }
+
+        ul, ol {
+            margin: 5px 0 12px 20px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        strong {
+            color: #2b6cb0;
+        }
+
+        /* --- Unique Visual Elements --- */
+        .callout-box {
+            background-color: #f7fafc;
+            border-left: 4px solid #3182ce;
+            border-right: 1px solid #e2e8f0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 15px;
+            margin: 12px 0;
+            font-size: 9.5pt;
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .callout-title {
+            font-weight: 800;
+            color: #1a365d;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-size: 9pt;
+            letter-spacing: 0.5px;
+        }
+
+        .figure-container {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px;
+            margin: 10px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .figure-container img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .figure-caption {
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 8.5pt;
+            color: #4a5568;
+            margin-top: 8px;
+            text-align: justify;
+            line-height: 1.3;
+        }
+
+        .full-width-image {
+            width: 100%;
+            margin: 15px 0;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            padding: 5px;
+            box-sizing: border-box;
+            background: #f8fafc;
+        }
+
+        /* --- Tables --- */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 9pt;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        table.data-table th, table.data-table td {
+            border: 1px solid #cbd5e0;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table.data-table th {
+            background-color: #2d3748;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 8.5pt;
+            letter-spacing: 0.5px;
+        }
+
+        table.data-table tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+
+        /* Custom Colors for Evaluation Table */
+        .eval-strong { color: #276749; font-weight: bold; }
+        .eval-vstrong { color: #22543d; font-weight: bold; font-size: 1.05em; }
+        .eval-mod { color: #b7791f; font-weight: bold; }
+        .eval-weak { color: #c53030; font-weight: bold; }
+
+        /* --- Diagrams --- */
+        .flow-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #cbd5e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 8.5pt;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            width: 55px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .flow-arrow {
+            color: #a0aec0;
+            font-size: 14pt;
+        }
+
+        /* Unique styles for nodes */
+        .node-hook { background: #fed7d7; color: #9b2c2c; }
+        .node-curiosity { background: #feebc8; color: #975a16; }
+        .node-story { background: #c6f6d5; color: #22543d; }
+        .node-value { background: #bbeecc; color: #1e4b37; border: 2px solid #22543d; }
+        .node-lesson { background: #e9d8fd; color: #553c9a; }
+        .node-takeaway { background: #bee3f8; color: #2a4365; }
+        .node-engagement { background: #edf2f7; color: #4a5568; }
+        .node-icon { font-size: 14pt; margin-bottom: 4px; }
+
+        .myth-truth-badge {
+            display: inline-block;
+            background: #fed7d7;
+            color: #9b2c2c;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 8pt;
+            margin-top: 5px;
+        }
+
+        /* --- Download Button Styling --- */
+        .no-print-container {
+            width: 8.5in;
+            margin: 0 auto 10px auto;
+            text-align: right;
+        }
+        .download-button {
+            background-color: #2b6cb0;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+        .download-button:hover {
+            background-color: #1a365d;
+        }
+        @media print {
+            .no-print-container { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="no-print-container" style="width: 8.5in; margin: 0 auto 10px auto; text-align: right;">
+        <button class="download-button" onclick="generatePDF()" style="background:#2b6cb0; color:white; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">
+            Download High-Res PDF
+        </button>
+    </div>
+
+    <!-- ================= PAGE 1: INTRODUCTION ================= -->
+    <div class="page">
+        <div class="running-header">
+            <span>Chapter 7: Digital Rhetoric &amp; Attention</span>
+            <span>Section 7.1</span>
+        </div>
+        
+        <div class="page-content">
+            <h1 class="chapter-title">7. The Rhetoric of Attention on Instagram</h1>
+            
+            <div class="columns">
+                <div class="column" style="justify-content: flex-start;">
+                    <div class="figure-container" style="margin-top: 0;">
+                        <img src="hook.jpeg" width="800" height="800" alt="Main Hook Image">
+                        <div class="figure-caption"><strong>Figure 7.1:</strong> The main hook designed to direct visual priority.</div>
+                    </div>
+                    
+                    <div class="callout-box">
+                        <div class="callout-title">Think About It</div>
+                        Before reading further, look at the image again.<br>
+                        Don’t overthink it. Which sentence did you read first?<br>
+                        Which text styles were used?<br>
+                        What about more subtle styles that may have been intended?<br>
+                        Is anything at all a coincidence?
+                    </div>
+                </div>
+                
+                <div class="column" style="justify-content: flex-start;">
+                    <p>Which sentence did you read first? Why? You probably didn’t consciously choose where to read. Rather, the design guided you almost seamlessly into reading according to the creator’s order. This is just one example of <strong>rhetoric</strong>.</p>
+                    
+                    <p>This chapter explains how Instagram creators capture longer-term attention in the first few seconds, and how you can identify the different rhetorical methods.</p>
+                    
+                    <p>There are three broad methods that creators use to make you interested in an Instagram post:</p>
+                    <ul>
+                        <li><strong>Curiosity</strong>: How do you make someone stop scrolling?</li>
+                        <li><strong>Visual Contrast</strong>: What makes you recognize one emotion over another?</li>
+                        <li><strong>Hierarchy</strong>: How does the content guide you until the conclusion?</li>
+                    </ul>
+                    <p>And that is an entire rhetorical journey.</p>
+                    
+                    <div class="callout-box" style="background-color: #ebf8ff; border-left-color: #2b6cb0;">
+                        <div class="callout-title" style="color: #2c5282;">Learning Objectives</div>
+                        <ul>
+                            <li>Identify rhetorical strategies that create curiosity.</li>
+                            <li>Identify visual contrasts for an effective opening.</li>
+                            <li>Evaluate the effectiveness of an Instagram post using hierarchy.</li>
+                        </ul>
+                    </div> <!-- End of Learning Objectives -->
+                </div> <!-- End of top right column -->
+            </div>
+
+            <!-- Updated Bottom Row for Page 1 -->
+            <div style="margin-top: 10px;">
+                <h2 style="text-align: left; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 8px;">Identify rhetorical strategies that create curiosity.</h2>
+                <div class="columns">
+                    <div class="column">
+                        <p>Instagram is a highly engagement-driven platform, most posts optimized for getting as many views and clicks as possible. In some ways, parts of the posting that are made to stop your scrolling is today’s form of <strong>rhetoric</strong>.</p>
+                        <p>Just the first few seconds you keep an audience hooked to your post, and that is enough for them to keep engaging for much longer. Successful posts don’t just rely on attractive images—they also use rhetorical choices that</p>
+                    </div>
+                    
+                    <div class="column">
+                        <p>encourage the audience to want more information.</p>
+                        <p>A good example for this form of novelty is when a post challenges something the audience believes. People tend to pay short-term attention when what they see conflicts with what they expect. This creates the <strong>“knowledge gap,”</strong> and readers are curious to know why they were wrong—they don’t give out the answers right away.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="running-footer">
+            <span>Digital Rhetoric &amp; Attention</span>
+            <span>Page 214</span>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 2: CURIOSITY PART 1 ================= -->
+    <div class="page">
+        <div class="running-header">
+            <span>Chapter 7: Digital Rhetoric &amp; Attention</span>
+            <span>Section 7.2</span>
+        </div>
+        
+        <div class="page-content">
+            <div class="columns">
+                <div class="column">
+                    <div class="figure-container" style="margin-top: 0;">
+                        <img src="wireless_radiation.png" width="955" height="565" alt="Post challenging audience belief on radiation">
+                        <div class="figure-caption"><strong>Figure 7.2:</strong> Rhetorical framing exploiting the knowledge gap regarding everyday Bluetooth usage.</div>
+                    </div>
+                    
+                    <p>In the post above, the headline asks, “Should We Be Worried About Radiation” without stating right away whether Bluetooth is safe or harmful. Many readers assume they know the answer right away because they see others and themselves using Bluetooth devices everyday. However, that something so universally used might be even slightly dangerous is an unexpected consideration. Readers become curious because they want to see to what extent that their belief is true. This post specifically had eight other panels, but the reader will stay curious through all of them since the conclusion was only at the end.</p>
+                    <p>Although, as stated previously, challenging a reader’s belief is good for short-term attention, readers instinctively also like content they can agree with and relate to. <strong>Relevance</strong> can come from shared experiences, common knowledge, and reasonable conclusions. Out of everything else the audience was finding new, when they see a familiar concept and think “this applies to me,” their thoughts organize as if having a conversation. Otherwise, new information in a familiar topic will seem important because the audience will expect something useful.</p>
+                </div>
+                
+                <div class="column">
+                
+                    
+                    <p>Another effective rhetoric for curiosity is <strong>specific detail</strong>. For example, numbers stand out. Instead of “Improve your writing,” a creator says: “These 17 words instantly improve your writing.” This specific and believable fact of “17 words” provides credibility and makes the audience wonder, “Which 17 words?” That’s curiosity.</p>
+                    
+                    <div class="figure-container">
+                        <img src="specific_detail.png" width="819" height="565" alt="Post utilizing specific numerical details">
+                        <div class="figure-caption"><strong>Figure 7.3:</strong> The use of hyper-specific metrics to instantly build credibility and halt scrolling.</div>
+                    </div>
+
+                    <p>A main text in this post uses “Day 132” and current followers of “924,829” to suddenly shift the tone from general to specific. Numbers are specific and accurate to the ones value instead of rounding it off or generalizing it, making the audience pause for a moment to think about the scale. Just a short-term attention for interpreting the context of such specific numbers is enough to keep the reader slightly longer for the main content. The content of this post, a video, compliments well with this detail as the reader is shifting their attention to the creator’s speech for explaining the context.</p>
+
+                    <p>These are only two examples, creators use several other rhetorical strategies. The next rhetorical elements have to do with strengthening context right away, then making the reader be curious for it first.</p>
+
+                    <p>Sometimes, a <strong>clear message</strong> right away can be effective context for the reader to stay curious. Instead of saying “this post explains why forgiveness matters,” it’s much more clear to say “forgiveness can clear you from carrying resentment.” The reader knows exactly why they are here, and after knowing the “what,” they can be interested in other specifics or the “how.”</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="running-footer">
+            <span>Digital Rhetoric &amp; Attention</span>
+            <span>Page 215</span>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 3: CURIOSITY PART 2 & VISUAL CONTRAST INTRO ================= -->
+    <div class="page">
+        <div class="running-header">
+            <span>Chapter 7: Digital Rhetoric &amp; Attention</span>
+            <span>Section 7.2 &amp; 7.3</span>
+        </div>
+        
+        <div class="page-content" style="justify-content: flex-start;">
+            <!-- Curiosity Split -->
+            <div class="columns" style="flex: none;">
+                <div class="column">
+                    <p>Effective curiosity can especially be created with multiple elements working together. A post can start with a specific statement challenging a belief, and the audience will be curious in both the credibility and the contradiction.</p>
+                </div>
+                <div class="column">
+                    <p>These strategies encourage the readers to evaluate, relate, and ask questions with the content.</p>
+                </div>
+            </div>
+            
+            <!-- Header and Intro -->
+            <div style="margin-top: 10px;">
+                <h2 style="text-align: left; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 8px;">Identify visual contrasts for an effective opening.</h2>
+                <p>One of the most noticeable strategies of successful Instagram posts are the visual elements themselves. These effects can be more instinctive, however, and usually unnoticed until directly analyzed. A strategy is to look for the following elements that shape attention in Instagram.</p>
+            </div>
+
+            <!-- Visual Elements First Row -->
+            <div class="columns" style="margin-top: 5px;">
+                <div class="column">
+                    <p><strong>Bright Colors</strong>: pure colors with usually little white and no black added to it. Saturated visuals include neon pinks, electric blues, and contrasting color pairings. They simply attract attention by standing out.</p>
+                    <div class="figure-container" style="margin-top: 5px;">
+                        <img src="bright_colors.png" width="453" height="564" alt="Example of Bright Colors">
+                    </div>
+                </div>
+                <div class="column">
+                    <p><strong>Typography</strong>: the text itself as a visual. Large bold headlines, handwritten scripts, text layered over gradients. They control readability and priority.</p>
+                    <div class="figure-container" style="margin-top: 5px;">
+                        <img src="typography.png" width="451" height="564" alt="Example of Typography">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="running-footer">
+            <span>Digital Rhetoric &amp; Attention</span>
+            <span>Page 216</span>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 4: VISUAL CONTRAST IMAGES ================= -->
+    <div class="page">
+        <div class="running-header">
+            <span>Chapter 7: Digital Rhetoric &amp; Attention</span>
+            <span>Section 7.3</span>
+        </div>
+        
+        <div class="page-content">
+            <div class="columns">
+                <div class="column">
+                    <p><strong>Focal Point</strong>: the element the eye is naturally drawn to first. Directly says that something matters.</p>
+                    <div class="figure-container">
+                        <img src="focal_point.png" width="479" height="599" alt="Example of Focal Point">
+                    </div>
+
+                    <p><strong>Human faces</strong>: close-up portraits, honest reactions, expressive eyes, laughter. It can also be the lack of it, like blank expressions or even partially hidden or turned away. Viewers mirror emotions after instant reading.</p>
+                    <div class="figure-container">
+                        <img src="human_faces.png" width="564" height="564" alt="Example of Human Faces">
+                    </div>
+                </div>
+                
+                <div class="column">
+                    <p><strong>Spaces</strong>: simply, empty areas in an image—a clear sky, minimalist advertisement background, wide space between visuals. Oftentimes, it’s the other elements becoming the focus because of the contrast, rather than the space itself meaning something.</p>
+                    <div class="figure-container" style="margin-bottom: 20px;">
+                        <img src="spaces.png" width="499" height="599" alt="Example of Spaces">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="running-footer">
+            <span>Digital Rhetoric &amp; Attention</span>
+            <span>Page 217</span>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 5: HIERARCHY PART 1 ================= -->
+    <div class="page">
+        <div class="running-header">
+            <span>Chapter 7: Digital Rhetoric &amp; Attention</span>
+            <span>Section 7.4</span>
+        </div>
+        
+        <div class="page-content">
+            <h2>Evaluate the effectiveness of an Instagram post using hierarchy.</h2>
+            <p>When someone opens up Instagram, they don’t read linearly—they scan across. Again, attention is defined in the first few seconds. In rhetorical terms, <strong>hierarchy</strong> is how different elements are aligned and designed to control the order of attention. Conceptually, hierarchy has dominant entry points, reading path, grouping, and a final line. These work together as rhetorical forces to define order of visuals and what is remembered in the end.</p>
+            
+            <div class="full-width-image">
+                <img src="hierarchy.png" width="1294" height="629" alt="Visual Hierarchy Layout" style="max-width: 100%; height: auto; display: block;">
+                <div class="figure-caption" style="margin-top: 10px; padding: 12px; background: #f1f5f9; border-radius: 4px; color: #2d3748; line-height: 1.4;">
+                    <strong>Figure 7.4:</strong> Example of a high-hierarchy educational post and its accompanying caption text:
+                    <p style="margin: 8px 0 5px 0; font-style: italic;">"The mind isn’t one dimensional so no single theory can fully explain it.</p>
+                    <p style="margin: 5px 0; font-style: italic;">Some approaches focus on behaviour, some on thoughts, some on our past, and some on the bigger picture of human experience.</p>
+                    <p style="margin: 5px 0 0 0; font-style: italic;">it isn't about choosing one side, it's about understanding how all these perspectives come together to make sense of who we are. 💙"</p>
+                </div>
+            </div>
+            
+            <div class="columns">
+                <div class="column">
+                    <ol>
+                        <li><strong>Hook</strong>: The heading “SCHOOLS OF PSYCHOLOGY” is the largest and center text, viewers will notice it first. The clean and minimalist aesthetic is also meant for the audience to be attracted.</li>
+                        
+                        <li><strong>Curiosity</strong>: Oftentimes, the second text that will be read, as the text beneath the title: “Different perspectives. Same goal –- to understand the mind.” Explains the context and the broad theme as a <strong>clear message</strong>. The audience will keep reading if they’re curious about this message, and because the decision is slightly more subjective, it could be stronger against a general audience.</li>
+                    </ol>
+                </div>
+                <div class="column">
+                    <ol start="3">
+                        <li><strong>Story</strong>: The six different psychology schools listed side by side. Explained with the soft pastel theme and icons that each school by itself is unique, and the whole perspective is there because each part of the story is present. The order is also thematic than chronological: structuralism is the first formal school, functionalism shifts to the mental process, behaviorism then transitions from mental to observable... psychoanalysis contrasts with emphasis on the unconscious mind, humanistic becomes even more metaphysical against behaviorism and psychoanalysis by emphasizing free will, and Gestalt often appears the last in textbooks as an even separate, the “how” perspective of humanistic.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="running-footer">
+            <span>Digital Rhetoric &amp; Attention</span>
+            <span>Page 218</span>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 6: HIERARCHY PART 2 ================= -->
+    <div class="page">
+        <div class="running-header">
+            <span>Chapter 7: Digital Rhetoric &amp; Attention</span>
+            <span>Section 7.4</span>
+        </div>
+        
+        <div class="page-content">
+            <div class="columns">
+                <div class="column">
+                    <ol start="4">
+                        <li><strong>Value</strong>: After skimming over the content briefly, interested viewers will look closer at the contents of each box representing a school. The theme pastel colors and icons themselves are unique, highlighting different comparable points that transition effectively and make up the story. Each description with the theme icon, focus, key ideas, methods, concepts, and one-line summaries provide the educational value.</li>
+                        
+                        <li><strong>Lesson</strong>: The box at the bottom and the paragraphs of the caption. It is explained that “each school is a lens” and the story as a whole helps us understand “how all these perspectives come together and make sense of who we are.” The direct message by the creator as what they want you to remember.</li>
+                        
+                        <li><strong>Takeaway</strong>: The combined message, the implicit and subjective impression the post made to a viewer overall that will actually be remembered. Even if details are forgotten, the theme that “each school provides different perspectives for a more complete understanding” to make up for the story of this post can be widely remembered.</li>
+                    </ol>
+                </div>
+                
+                <div class="column">
+                    <ol start="7">
+                        <li><strong>Engagement</strong>: Usually the call to action for the post, but it’s weak for this post. There isn’t a direct message but the <strong>hashtags</strong> including #mentalhealthawareness and #counseling group this post with other posts, increasing discoverability and encouraging the viewer to keep exploring these topics on Instagram. A question of “Which school did you find most interesting?” or an extension to the caption “Share this with someone interested in psychology” would make engagement much more effective.</li>
+                    </ol>
+
+                    <h3>Overall, for this post:</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Hierarchical Element</th>
+                                <th>Effectiveness Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Hook</td><td class="eval-strong">Strong</td></tr>
+                            <tr><td>Curiosity</td><td class="eval-mod">Moderate</td></tr>
+                            <tr><td>Story</td><td class="eval-strong">Strong</td></tr>
+                            <tr><td>Value</td><td class="eval-vstrong">Very Strong</td></tr>
+                            <tr><td>Lesson</td><td class="eval-strong">Strong</td></tr>
+                            <tr><td>Takeaway</td><td class="eval-strong">Strong</td></tr>
+                            <tr><td>Engagement</td><td class="eval-weak">Weak</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h3>Movement of Hierarchy summarized:</h3>
+                <div class="flow-diagram">
+                    <div class="flow-node node-hook"><span class="node-icon">🪝</span>Hook</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-node node-curiosity"><span class="node-icon">🤔</span>Curiosity</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-node node-story"><span class="node-icon">📖</span>Story</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-node node-value"><span class="node-icon">💎</span>Value</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-node node-lesson"><span class="node-icon">🎓</span>Lesson</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-node node-takeaway"><span class="node-icon">🧠</span>Takeaway</div>
+                    <div class="flow-arrow">➔</div>
+                    <div class="flow-node node-engagement"><span class="node-icon">💬</span>Engagement</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="running-footer">
+            <span>Digital Rhetoric &amp; Attention</span>
+            <span>Page 219</span>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 7: EVALUATION & SUMMARY ================= -->
+    <div class="page">
+        <div class="running-header">
+            <span>Chapter 7: Digital Rhetoric &amp; Attention</span>
+            <span>Review &amp; Summary</span>
+        </div>
+        
+        <div class="page-content">
+            <div class="callout-box" style="margin-top: 0;">
+                <div class="callout-title" style="font-size: 11pt;">Myth vs Fact</div>
+                <p>Attention on social media can mean something a lot deeper than what’s often believed in with popular culture.</p>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 45%;">Popular Myth</th>
+                            <th style="width: 20%;">Origin</th>
+                            <th style="width: 35%;">Fact &amp; Validity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-size: 1.1em; font-weight: bold; color: #2d3748;">Social media has reduced human attention span to 8 seconds (less than a goldfish).</td>
+                            <td>A 2015 Microsoft Canada survey.</td>
+                            <td>It’s not possible for “attention span” to be standardized as one number. Contradictingly, minds have instead adapted with social media to handle high volumes of information, than not being able to. Maintaining long-term focus is different, like binge-watching a 10-hour television series.<br><span class="myth-truth-badge">❌ Entirely Fabricated</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 1.1em; font-weight: bold; color: #2d3748;">People passively consume whatever social media algorithms feed them.</td>
+                            <td>Simply the concept that users are zombie-like for what they see, driven entirely by tech companies without any true control.</td>
+                            <td>Consumers actually demonstrate deep, active selectivity, unique for each individual. Rather than optimizing with the algorithm, our mind is often polarized against and for different concepts—tolerance for disliked content is reduced significantly and can be seen in the form of swiping away what we quickly see.<br><span class="myth-truth-badge">❌ Misconception</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 1.1em; font-weight: bold; color: #2d3748;">Social media can cause ADHD.</td>
+                            <td>Frequent use of short-form apps even physically damages the brain’s ability to concentrate, causing behavioral disorders—but not mental.</td>
+                            <td>Research fails to prove a long-term physiological change that results in attention deficit disorders. Endless scrolling is only a behavioral adaptation.<br><span class="myth-truth-badge">❌ Unproven Physiology</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 style="margin-top: 20px;">Summary</h2>
+            <p>Each Instagram post’s first goal is to make you stop scrolling. Then, to transfer this curiosity into an emotion the creator intends. And last, to visually guide you until the end so their conclusion and takeaway is remembered.</p>
+            <p>Throughout this chapter, you explored three ways creators accomplish this.</p>
+            <ul>
+                <li><strong>Curiosity</strong> encourages the viewer to stop and pay attention by including <strong>knowledge gap</strong> and <strong>specific details</strong>.</li>
+                <li><strong>Visual contrast</strong> redirects attention into emotions using <strong>color</strong>, <strong>typography</strong>, and <strong>spacing</strong>.</li>
+                <li><strong>Hierarchy</strong> organizes information so viewers naturally move content-wise from the hook to the content, the conclusion and a subjective <strong>takeaway</strong> that is remembered across the details.</li>
+            </ul>
+            <p>Now, you can effectively use rhetorical strategies to help the audience understand and remember content, and consciously try to redefine a takeaway to what you want to remember—<strong>nothing is by coincidence</strong>!</p>
+        </div>
+        
+        <div class="running-footer">
+            <span>Digital Rhetoric &amp; Attention</span>
+            <span>Page 220</span>
+        </div>
+    </div>
+
+    <script>
+    function generatePDF() {
+        // Target the element containing all pages
+        const element = document.body;
+        
+        // Configure the options
+        const opt = {
+            margin:       0,
+            filename:     'The_Rhetoric_of_Attention.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, // Higher scale = better quality
+                useCORS: true, 
+                letterRendering: true
+            },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+            // This is the magic part: it forces a new PDF page at every .page div
+            pagebreak:    { mode: ['css', 'legacy'], before: '.page' }
+        };
+
+        // Run the conversion
+        html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+            // Optional: Any final tweaks to the PDF object can go here
+        }).save();
+    }
+    </script>
+</body>
+</html>
